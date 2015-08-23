@@ -1,6 +1,40 @@
 {
-  "options":
-  {
-    "includeProcfile": ["static:procfile"]
+  "options": {
+    "includeFavicon": {
+      command: ['-i, --include-favicon', 'include the GA Gear favicon'],
+      structures: ["insert:favicon", "static:favicon.ico"]
+    },
+    "includeMongo": {
+      command: ['-m, --include-mongo', 'include MongoDB and Mongoose'],
+      structures: ["insert:mongoApp", "template:mongoSeed", "insert:mongoSeed"]
+    },
+    "includeProcfile": {
+      command:    ['-p, --include-procfile', 'include a Procfile for Heroku'],
+      structures: ["static:procfile"]
+    },
+    "includeTests": {
+      command: ['-t, --include-tests', 'include Mocha/Chai BDD testing'],
+      structures: ["static:tests"]
+    },
+    "includeJquery": {
+      command: ['-$, --include-jquery', 'include client library jQuery'],
+      structures: ["remote:jquery", "insert:jquery"]
+    },
+    "includeLodash": {
+      command: ['-_, --include-lodash', 'include client library LoDash'],
+      structures: ["remote:lodash", "insert:lodash"]
+    },
+    "includeBootstrap": {
+      command: ['-b, --include-bootstrap', 'include client library Bootstrap'],
+      structures: ["remote:bootstrap", "insert:bootstrap"]
+    },
+    "includeSocketio": {
+      command: ['-s, --include-socketio', 'include Socket.IO'],
+      structures: ["insert:socketio", "insert:socketioServer", "static:iojs"]
+    }
   }
 }
+
+
+
+

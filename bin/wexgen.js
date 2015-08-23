@@ -64,7 +64,7 @@ __appname = 'example-app';
  *     - basic (SUPER SIMPLE)
  *     - (default) full: ()
  *     - api:        (mongo, json version widget scaffold)
- *     - secure-api: (mongo, web-tokens, json version user & widget scaffold)
+ *     - secure-api: (mongo, web-tokens / no session, json version user & widget scaffold)
  * --security [local | token | oauth]
  *
  */
@@ -79,6 +79,7 @@ __appname = 'example-app';
  * - no testing
  * - no client libs
  * - no GA favicon!
+ * - no socket.io
  */
 
 // parse options
@@ -99,6 +100,14 @@ program.on('--help', function(){
   `);
 });
 
+
+/**
+ * "Use" commands change how wexgen runs.
+ *   1. Verbose:  run with full output logging.
+ *   2. Comments: insert _all_ comments (there are a LOT) in the files.
+ *   3. Force:    overwrite an existing directory if it exists.
+ */
+
 program
   // .option('-h, --help',    'print usage information')
   // .option('-V, --version', 'print the version number')
@@ -107,34 +116,49 @@ program
   .option('-C, --use-comments', 'add full explanatory comments (not implemented)')
   .option('-F, --use-force',    'overwrite a non-empty app directory (not implemented)')
 
-  .option('-i, --include-favicon',  'include the GA Gear favicon')
-  .option('-m, --include-mongo',    'include MongoDB and Mongoose')
-  .option('-p, --include-procfile', 'include a Procfile for Heroku')
-  .option('-t, --include-tests',    'include Mocha/Chai BDD testing')
 
-  .option('-$, --include-jquery',    'include client library jQuery')
-  .option('-_, --include-lodash',    'include client library LoDash')
-  .option('-b, --include-bootstrap', 'include client library Bootstrap')
+/**
+ * "Include" commands add optional features to the default build. The
+ * data for these is stored in `data/manifest.json`.
+ */
 
-program
-  .command('generate model [Model]')
-  .alias('g model')
-  .description('creates a basic Mongoose model & seed file')
-  .action(function(modelName){
-    program.includeMongo = true
-  });
+// load manifest json
+// var manifest = jsonfile.readFileSync(manifestFile.abs);
 
-program
-  .command('generate routes [Resource]')
-  .alias('g routes')
-  .description('creates a basic, RESTful controller')
+// var flagged,
+//     structs;
 
-program
-  .command('generate scaffold [Resource]')
-  .alias('g scaffold')
-  .description('creates a model, controller, and views for a resource ')
+// // load necessary optional code structures
+// for (var option in manifest.options) {
+//   flagged = program[option] === true;
+//   structs = flagged ? manifest.options[option] : []
+
+//   console.log(option + ':', flagged, flagged ? structs : '');
+// }
+
+// program.option.apply(program.option, values)
+
+// program
+//   .command('generate model [Model]')
+//   .alias('g model')
+//   .description('creates a basic Mongoose model & seed file')
+//   .action(function(modelName){
+//     program.includeMongo = true
+//   });
+
+// program
+//   .command('generate routes [Resource]')
+//   .alias('g routes')
+//   .description('creates a basic, RESTful controller')
+
+// program
+//   .command('generate scaffold [Resource]')
+//   .alias('g scaffold')
+//   .description('creates a model, controller, and views for a resource ')
 
 program.parse(process.argv);
+
+// Handle
 
 // console.log(process.argv)
 // if (!process.argv.slice(2).length) {
@@ -143,19 +167,7 @@ program.parse(process.argv);
 
 // console.log(program.usage())
 
-// load manifest json
-var manifest = jsonfile.readFileSync(manifestFile.abs);
 
-var flagged,
-    structs;
-
-// load necessary optional code structures
-for (var option in manifest.options) {
-  flagged = program[option] === true;
-  structs = flagged ? manifest.options[option] : []
-
-  console.log(option + ':', flagged, flagged ? structs : '');
-}
 
 /***********************************
  * Define document parsing helpers.

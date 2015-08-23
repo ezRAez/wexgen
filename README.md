@@ -1,3 +1,5 @@
+Note: Only tested for Io.js v3.0.0 (and above).
+
 ┌──────────────────────────────────────────────────────────────────────┐
 │           PARSE   RESOLVE   SCAFFOLD  PARSE INS.                     │
 │TEMPLATES   EJS   FILENAMES  (WRITE)    POINTS                        │
