@@ -1,3 +1,77 @@
+# Wexgen – WDI's Express Generator
+
+An [Express](https://www.npmjs.com/package/express) application generator
+following WDI conventions.
+
+## Attribution
+
+While a fork, this project is very different from the original Express 
+generator in scope and form. However, the basic template for the completed
+application (and this documentation) is taken directly the original. All 
+thanks to everyone who has worked on Express, and who keep it and its suite
+of tools running. Send them tips!
+
+[![Gratipay][gratipay-image]][gratipay-url]
+
+## Installation
+
+```sh
+$ npm install -g wexgen
+```
+
+## Quick Start
+
+The quickest way to get started with wex is to utilize the executable 
+`wexgen` to generate an application as shown below:
+
+Create the app:
+
+```bash
+$ wexgen /tmp/example-app
+```
+
+Install dependencies:
+
+```bash
+$ cd /tmp/example-app && npm install
+```
+
+Rock and roll:
+
+```bash
+$ nodemon
+```
+
+## Command Line Options
+
+This generator can also be further configured with the following command line flags.
+
+```
+-h, --help          output usage information
+-V, --version       output the version number
+-e, --ejs           add ejs engine support (defaults to jade)
+    --hbs           add handlebars engine support
+-H, --hogan         add hogan.js engine support
+-c, --css <engine>  add stylesheet <engine> support (less|stylus|compass|sass) 
+                    (defaults to plain css)
+    --git           add .gitignore
+-f, --force         force on non-empty directory
+```
+
+## License
+
+[MIT](LICENSE)
+
+<!-- Links -->
+
+[gratipay-image]: https://img.shields.io/gratipay/dougwilson.svg
+[gratipay-url]: https://gratipay.com/dougwilson/
+
+----
+
+
+
+
 Note: Only tested for Io.js v3.0.0 (and above).
 
 ┌──────────────────────────────────────────────────────────────────────┐

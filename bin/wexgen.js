@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 // Import language modules
-var path = require('path'),
-    fs   = require('fs-extra');
+var path = require('path');
 
 // Import NPM modules
-var jsonfile = require('jsonfile'),
+var fs       = require('fs-extra'),
+    jsonfile = require('jsonfile'),
     ejs      = require('ejs'),
     debug    = require('debug')('debug'),
     colors   = require('colors'),
@@ -13,7 +13,8 @@ var jsonfile = require('jsonfile'),
     AppPath  = require('application-resolved-path');
 
 // Import local modules
-var pkg = require('../package');
+var pkg  = require('../package'),
+    util = require('../lib/util');
 
 /***************************
  * Define global variables.
@@ -50,26 +51,11 @@ if ((typeof __outputDir === 'undefined') || NODE_DEBUG) {
 // set default application name
 __appname = 'example-app';
 
-/***************************************
- * Handle options and load the manifest.
- ***************************************/
+/******************************************
+ * Declare options and load the manifest. *
+ ******************************************/
 
-// TODO (PJ): update this to include...
-/*
- * - Example Resources (either in HTML or JSON versions)
- *     1.  Widget (model/controller/views/seed)
- *     2.  User w/ Authentication
- *
- * --app [basic | full | api | secure-api]
- *     - basic (SUPER SIMPLE)
- *     - (default) full: ()
- *     - api:        (mongo, json version widget scaffold)
- *     - secure-api: (mongo, web-tokens / no session, json version user & widget scaffold)
- * --security [local | token | oauth]
- *
- */
-
-// TODO (PJ): Defaults for wex are:
+// TODO (PJ): Defaults for wexgen are:
 /*
  * - EJS Templates
  * - .gitignore
@@ -82,7 +68,10 @@ __appname = 'example-app';
  * - no socket.io
  */
 
-// parse options
+/**
+ * Create basic setup information for the CLI command.
+ */
+
 program
   .version(pkg.version)
   .usage('<appname> [options]')
@@ -97,9 +86,8 @@ program.on('--help', function(){
 `  Example:
 
     ${"$ wexgen new-app-name".green}
-  `);
+` );
 });
-
 
 /**
  * "Use" commands change how wexgen runs.
@@ -112,31 +100,25 @@ program
   // .option('-h, --help',    'print usage information')
   // .option('-V, --version', 'print the version number')
   .option('-v, --verbose', 'print verbosely (not implemented)')
-
   .option('-C, --use-comments', 'add full explanatory comments (not implemented)')
   .option('-F, --use-force',    'overwrite a non-empty app directory (not implemented)')
-
 
 /**
  * "Include" commands add optional features to the default build. The
  * data for these is stored in `data/manifest.json`.
  */
 
+// --security [local | token | oauth]
+
 // load manifest json
-// var manifest = jsonfile.readFileSync(manifestFile.abs);
+var manifest = jsonfile.readFileSync(manifestFile.abs);
 
-// var flagged,
-//     structs;
+util.inspect(Object.getOwnPropertyNames(manifest.options).map(function(p) {return manifest.options[p].command}));
 
-// // load necessary optional code structures
-// for (var option in manifest.options) {
-//   flagged = program[option] === true;
-//   structs = flagged ? manifest.options[option] : []
-
-//   console.log(option + ':', flagged, flagged ? structs : '');
-// }
-
-// program.option.apply(program.option, values)
+/**
+ * "Subcommands" or Generators add optional features to build, while not
+ * building the default app.
+ */
 
 // program
 //   .command('generate model [Model]')
@@ -156,18 +138,55 @@ program
 //   .alias('g scaffold')
 //   .description('creates a model, controller, and views for a resource ')
 
+// Example Resources (either in HTML or JSON versions)
+//   1.  Widget (model/controller/views/seed)
+//   2.  User w/ Authentication, according to security type...
+
+/**
+ * "Bundle" commands are bundles of includes and generators that represent
+ * stock application types.
+ */
+
+// --app [basic | full | api | secure-api]
+//   - basic (SUPER SIMPLE)
+//   - (default) full: ()
+//   - api:        (mongo, json version widget scaffold)
+//   - secure-api: (mongo, web-tokens / no session, json version user & widget scaffold)
+
+/*****************************
+ * Parse and handle options. *
+ *****************************/
+
 program.parse(process.argv);
 
-// Handle
-
-// console.log(process.argv)
+// When there is no information passed in ARGV, print Help and exit.
 // if (!process.argv.slice(2).length) {
 //   program.help();
 // }
 
-// console.log(program.usage())
+// Handle Use Commands
+if (program.verbose) process.env.DEBUG='*';
+// if (program.useComments)
+// if (program.useForce)
 
+// Handle Subcommands/Generators
 
+// Handle Include Commands
+
+// var flagged,
+//     structs;
+
+// // load necessary optional code structures
+// for (var option in manifest.options) {
+//   flagged = program[option] === true;
+//   structs = flagged ? manifest.options[option] : []
+
+//   console.log(option + ':', flagged, flagged ? structs : '');
+// }
+
+// program.option.apply(program.option, values)
+
+process.exit();
 
 /***********************************
  * Define document parsing helpers.
