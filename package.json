@@ -11,6 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "application-resolved-path": "^0.1.1",
+    "colors": "^1.1.2",
+    "commander": "^2.8.1",
     "debug": "^2.2.0",
     "ejs": "^2.3.3",
     "expand-home-dir": "0.0.2",

@@ -1,0 +1,6 @@
+{
+  "options":
+  {
+    "includeProcfile": ["static:procfile"]
+  }
+}
