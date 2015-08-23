@@ -1,0 +1,75 @@
+#!/usr/bin/env node
+
+// Import language modules.
+var http  = require('http');
+
+// Import NPM modules.
+var app   = require('../app');
+var debug = require('debug')('<%- app.name %>:server');
+
+/*****************
+ * NORMALIZE PORT
+ *****************/
+
+// Get the port number from environment, parse it as an integer, and
+// store it in the Express 'app'.
+var normalizePort = function(rawPort) {
+  var port = parseInt(rawPort, 10);
+
+  if (isNaN(port)) return rawPort; // it's a named pipe, not a number
+  if (port >= 0) return port;      // it's a regular old port number!
+  return false;
+}
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/*************************************************
+ * CREATE SERVER AND ATTACH EVENTS (LISTEN, ERROR)
+ *************************************************/
+
+// Create a basic, Node-based, HTTP server from our Express 'app'.
+var server = http.createServer(app);
+
+// Set an event to fire when the server begins listening to the port.
+var onListening = function() {
+  var address         = server.address(),
+      boundPipeOrPort =
+    (typeof addr === 'string') ? 'pipe ' + addr : 'port ' + addr.port;
+
+  // When running with DEBUG=<appName>:server, print the bound address
+  debug('Listening on ' + boundPipeOrPort);
+};
+server.on('listening', onListening);
+
+// Set an event to fire when the server encounters an error while trying
+// to listen.
+var onError = function(error) {
+  if (error.syscall !== 'listen')
+    throw error;
+
+  var boundPipeOrPort =
+    (typeof port === 'string') ? 'Pipe ' + port : 'Port ' + port;
+
+  // Handlers for common listening errors with "user-friendly" messages.
+  switch (error.code) {
+    case 'EACCES':
+      console.error(boundPipeOrPort + ' requires elevated privileges.');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(boundPipeOrPort + ' is already in use.');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+server.on('error', onError);
+
+/*****************
+ * START SERVER!!
+ *****************/
+
+// Tell the server to begin listening to the above port on all network
+// interfaces.
+server.listen(port);
