@@ -1,5 +1,5 @@
 {
-	"path": "/server.js",
+	"path": "/app.js",
 	"entries": [
 		{
       "name":  "importModules",

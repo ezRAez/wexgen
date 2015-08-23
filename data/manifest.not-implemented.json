@@ -1,0 +1,32 @@
+{
+  "options": {
+    "includeFavicon": {
+      "command":  ["-i, --include-favicon", "include the GA Gear favicon"],
+      "includes": ["insert:favicon", "static:favicon.ico"]
+    },
+    "includeMongo": {
+      "command":  ["-m, --include-mongo", "include MongoDB and Mongoose"],
+      "includes": ["insert:mongoApp", "template:mongoSeed", "insert:mongoSeed"]
+    },
+    "includeTests": {
+      "command":  ["-t, --include-tests", "include Mocha/Chai BDD testing"],
+      "includes": ["static:tests"]
+    },
+    "includeJquery": {
+      "command":  ["-$, --include-jquery", "include client library jQuery"],
+      "includes": ["remote:jquery", "insert:jquery"]
+    },
+    "includeLodash": {
+      "command":  ["-_, --include-lodash", "include client library LoDash"],
+      "includes": ["remote:lodash", "insert:lodash"]
+    },
+    "includeBootstrap": {
+      "command":  ["-b, --include-bootstrap", "include client library Bootstrap"],
+      "includes": ["remote:bootstrap", "insert:bootstrap"]
+    },
+    "includeSocketio": {
+      "command":  ["-s, --include-socketio", "include Socket.IO"],
+      "includes": ["insert:socketio", "insert:socketioServer", "static:iojs"]
+    }
+  }
+}
