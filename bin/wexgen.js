@@ -35,11 +35,10 @@ var remotesFile  = new AppPath('data/remotes.json',  {app: true}),
 // set default application name
 appname = 'example-app';
 
-/**************************************************
- * Handle CLI input and generate app description. *
- **************************************************/
+/******************************************************
+ * Handle CLI input and generates an app description. *
+ ******************************************************/
 
-// EVENTUALLY SHOULD LOOK LIKE
 var cli = require('../lib/cli');
 if (!cli(program, appname, process.env.DEBUG))
   process.exit();
