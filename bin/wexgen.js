@@ -13,7 +13,8 @@ var fs       = require('fs-extra'),
     AppPath  = require('application-resolved-path');
 
 // Import local modules
-var util = require('../lib/util');
+var util = require('../lib/util'),
+    cli  = require('../lib/cli');
 
 /***************************
  * Define global variables.
@@ -39,9 +40,8 @@ appname = 'example-app';
  * Handle CLI input and generates an app description. *
  ******************************************************/
 
-var cli = require('../lib/cli');
-if (!cli(program, appname, process.env.DEBUG))
-  process.exit();
+
+cli(program, appname, process.env.DEBUG) || process.exit();
 
 var app = cli.generatedApp();
 
