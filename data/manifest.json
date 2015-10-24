@@ -12,7 +12,7 @@
     "includeApp": {
       "includes": [
         "template:app",
-        "insert:app:ejs_views",
+        "insert:app:ejsViews",
         "insert:app:sessions"
       ]
     }

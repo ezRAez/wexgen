@@ -28,8 +28,7 @@ AppPath.root = path.join(__dirname, '..');
 var remotesFile  = new AppPath('data/remotes.json',  {app: true}),
     staticsDir   = new AppPath('data/statics',   {app: true}),
     templatesDir = new AppPath('data/templates', {app: true}),
-    insertsDir   = new AppPath('data/inserts',   {app: true}),
-    appname;
+    insertsDir   = new AppPath('data/inserts',   {app: true});
 
 function createIndenter(indents) {
   return function(str) {
@@ -45,11 +44,11 @@ function logger() {
   var text      = arguments[0] || "",
       indents   = arguments[1] || 0,
       indent    = createIndenter(indents),
-      maxLines  = arguments[2] || 10,
+      maxLines  = arguments[2] || 0,
       lines     = text.split("\n"),
       numLines  = lines.length;
 
-  if (numLines > maxLines) {
+  if (maxLines > 0 && numLines > maxLines) {
     lines = lines.slice(0, maxLines);
     lines.push(
       "... (" + numLines + " lines total)");
@@ -61,12 +60,12 @@ function logger() {
   return text;
 }
 
-// set default application name
-appname = 'example-app';
-
 /******************************************************
  * Handle CLI input and generate an app description. *
  ******************************************************/
+
+logger()
+logger(colors.yellow("1. Creating application description from options."))
 
 var definitions = function(app, type) {
   return app.includes.filter(function(include) {
@@ -76,12 +75,14 @@ var definitions = function(app, type) {
   });
 };
 
-cli(program, appname, process.env.DEBUG) || process.exit();
+// call with default application name
+cli(program, 'example-app', process.env.DEBUG) || process.exit();
 
 var app     = cli.generatedApp();
     statics = definitions(app, 'static');
 
-util.inspect(app);
+logger(colors.yellow('- Description: '), 2);
+logger(util.inspect(app, false), 4);
 
 /***********************************
  * Define document parsing helpers.
@@ -114,15 +115,14 @@ var readStaticContent = function(inputPath) {
   return content;
 };
 
-console.log('');
-console.log('Beginning app creation: ...');
-console.log('');
+logger();
+logger(colors.yellow('2. Generating application.'));
 
 /*****************************
  * Generate static documents.
  *****************************/
 
-console.log('Generating static documents:');
+logger(colors.yellow('- Generating static documents:'), 2);
 
 statics.forEach(function(rawFilename) {
   var inputFile  = convertToFilenamePath(rawFilename),
@@ -131,24 +131,13 @@ statics.forEach(function(rawFilename) {
       outputPath = path.resolve(outputFile),
       content;
 
-  // outputPath = path.resolve(
-  //   //app.outputDir.abs //,
-  //   // app.name,
-  //   // filename
-  // );
-
-  // console.log()
-
-  // if (!isDirectory(inputPath)) {
-    console.log('  - writing static file: ' + colors.red(outputFile)
-                /*, '(' + colors.yellow(inputPath.app) + ' -> ' + colors.green(outputFile) + ')'*/);
-    content = readStaticContent(inputPath.abs);
-    logger("==============================", 4)
-    logger(content, 4)
-    logger("==============================", 4)
-    logger("")
-    fs.outputFileSync(outputPath, content);
-  // }
+  logger('* Writing static file: ' + colors.red(outputFile), 4);
+  content = readStaticContent(inputPath.abs);
+  logger("==============================", 6)
+  logger(content, 6, 8)
+  logger("==============================", 6)
+  logger();
+  fs.outputFileSync(outputPath, content);
 });
 
 /*******************************
