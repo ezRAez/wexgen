@@ -147,6 +147,19 @@ statics.forEach(function(include) {
  * Build and resolve templates.
  *******************************/
 
+function parseInsert(text) {
+  var re = /\/\/(\s*)\:([\w|\!]+)\n/g,
+      match = "",
+      matches = [];
+
+  while(match = re.exec(text)) {
+    matches.push({entry: match[2], index: match.index + match[0].length});
+  }
+
+
+  return matches;
+}
+
 logger(colors.yellow('- Generating templated documents:'), 2);
 
 templates.forEach(function(include) {
@@ -160,21 +173,25 @@ templates.forEach(function(include) {
 
   logger('* Loading template file: ' + colors.yellow(inputFile), 4);
 
-  logger("iterate over the template entries, searching for inserts in each file", 6);
+  // logger("iterate over the template entries, searching for inserts in each file", 6);
 
   var template = jsonfile.readFileSync(inputPath.abs),
       entries  = _.pluck(template.entries, "name");
 
-  entries.forEach(function(entry) {
+  inserts.forEach(function(insert) {
+    var insertFile = include.definition + "." + insert + ".js",
+        insertPath = path.resolve(insertsDir.abs, insertFile);
 
+    content = readStaticContent(insertPath);
+    parsedInsert = parseInsert(content);
+    logger("Parsing " + colors.yellow(insertFile) + " for inserts…  " + "Found " + parsedInsert.length, 6);
+
+    console.log(parsedInsert);
+  });
+
+  entries.forEach(function(entry) {
     logger("Compiling " + colors.yellow(inputFile + ":" + entry) + ".", 6);
 
-    inserts.forEach(function(insert) {
-      var insertFile = include.definition + "." + insert + ".js",
-          insertPath = path.resolve(insertsDir.abs, insertFile);
-
-      logger("Checking " + colors.yellow(insertFile) + " for inserts…", 8);
-    });
   });
 
 
