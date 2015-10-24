@@ -50,7 +50,7 @@
 		{
       "name": "addRoutingMiddleware",
       "comments": {
-        "line": [
+        "block": [
           "Insert routing-level middleware that directs requests to assets, ",
           "static pages, or route handlers."
         ]
@@ -58,7 +58,10 @@
     },
 		{
       "name": "addErrorHandlingMiddleware",
-      "comments": {"line": "Insert error-handling middleware."}
+      "comments": {"block": "Insert error-handling middleware."}
+    },
+    {
+      "name": "moduleExport"
     }
 	]
 }

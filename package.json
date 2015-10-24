@@ -16,7 +16,8 @@
     "debug": "^2.2.0",
     "ejs": "^2.3.3",
     "expand-home-dir": "0.0.2",
-    "jsonfile": "^2.2.1"
+    "jsonfile": "^2.2.1",
+    "lodash": "^3.10.1"
   },
   "main": "bin/wexgen",
   "devDependencies": {

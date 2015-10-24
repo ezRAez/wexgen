@@ -9,7 +9,13 @@
     "includePackage": {
       "includes": ["static:package.json.ejs"]
     },
-    "includeApp": {
+    "includeDefaults": {
+      "includes": [
+        "template:app",
+        "insert:app:defaults"
+      ]
+    },
+    "includeStandard": {
       "includes": [
         "template:app",
         "insert:app:ejsViews",

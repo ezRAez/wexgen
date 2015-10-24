@@ -6,6 +6,7 @@ var path = require('path');
 // Import NPM modules
 var fs       = require('fs-extra'),
     jsonfile = require('jsonfile'),
+    _        = require('lodash'),
     ejs      = require('ejs'),
     debug    = require('debug')('debug'),
     colors   = require('colors'),
@@ -25,7 +26,7 @@ process.env.DEBUG = '*';
 
 AppPath.root = path.join(__dirname, '..');
 
-var remotesFile  = new AppPath('data/remotes.json',  {app: true}),
+var remotesFile  = new AppPath('data/remotes',   {app: true}),
     staticsDir   = new AppPath('data/statics',   {app: true}),
     templatesDir = new AppPath('data/templates', {app: true}),
     insertsDir   = new AppPath('data/inserts',   {app: true});
@@ -71,7 +72,7 @@ var definitions = function(app, type) {
   return app.includes.filter(function(include) {
     return include.type === type;
   }).map(function(include) {
-    return include.definition;
+    return include;
   });
 };
 
@@ -79,7 +80,8 @@ var definitions = function(app, type) {
 cli(program, 'example-app', process.env.DEBUG) || process.exit();
 
 var app     = cli.generatedApp();
-    statics = definitions(app, 'static');
+    statics = definitions(app, 'static'),
+    templates = definitions(app, 'template');
 
 logger(colors.yellow('- Description: '), 2);
 logger(util.inspect(app, false), 4);
@@ -124,14 +126,15 @@ logger(colors.yellow('2. Generating application.'));
 
 logger(colors.yellow('- Generating static documents:'), 2);
 
-statics.forEach(function(rawFilename) {
-  var inputFile  = convertToFilenamePath(rawFilename),
+statics.forEach(function(include) {
+  var rawFilename = include.definition,
+      inputFile  = convertToFilenamePath(rawFilename),
       inputPath  = new AppPath(addDirectoryToFilenamePath(staticsDir, rawFilename), {app: false}),
       outputFile = app.name + "/" + inputFile,
       outputPath = path.resolve(outputFile),
       content;
 
-  logger('* Writing static file: ' + colors.red(outputFile), 4);
+  logger('* Writing static file: ' + colors.green(outputFile), 4);
   content = readStaticContent(inputPath.abs);
   logger("==============================", 6)
   logger(content, 6, 8)
@@ -143,6 +146,39 @@ statics.forEach(function(rawFilename) {
 /*******************************
  * Build and resolve templates.
  *******************************/
+
+logger(colors.yellow('- Generating templated documents:'), 2);
+
+templates.forEach(function(include) {
+  var rawFilename = include.definition +  '.template.json',
+      inputFile  = convertToFilenamePath(rawFilename),
+      inputPath  = new AppPath(addDirectoryToFilenamePath(templatesDir, rawFilename), {app: false}),
+      outputFile = app.name + "/" + inputFile,
+      outputPath = path.resolve(outputFile),
+      inserts    = include.inserts,
+      content;
+
+  logger('* Loading template file: ' + colors.yellow(inputFile), 4);
+
+  logger("iterate over the template entries, searching for inserts in each file", 6);
+
+  var template = jsonfile.readFileSync(inputPath.abs),
+      entries  = _.pluck(template.entries, "name");
+
+  entries.forEach(function(entry) {
+
+    logger("Compiling " + colors.yellow(inputFile + ":" + entry) + ".", 6);
+
+    inserts.forEach(function(insert) {
+      var insertFile = include.definition + "." + insert + ".js",
+          insertPath = path.resolve(insertsDir.abs, insertFile);
+
+      logger("Checking " + colors.yellow(insertFile) + " for inserts…", 8);
+    });
+  });
+
+
+});
 
 // var templates = fs.readdirSync(__templates)
 //                     .map(function(tempFileName) {
