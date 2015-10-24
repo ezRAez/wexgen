@@ -1,13 +1,13 @@
 {
   "defaults": {
     "includeGitignore": {
-      "includes": ["static:_gitignore"]
+      "includes": ["static:_gitignore.ejs"]
     },
     "includeBinWWW": {
-      "includes": ["static:bin-www"]
+      "includes": ["static:bin-www.ejs"]
     },
     "includePackage": {
-      "includes": ["static:package.json"]
+      "includes": ["static:package.json.ejs"]
     },
     "includeApp": {
       "includes": [
