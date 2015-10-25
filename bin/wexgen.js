@@ -153,7 +153,7 @@ function parseInsert(text) {
       matches = [];
 
   while(match = re.exec(text)) {
-    matches.push({entry: match[2], index: match.index + match[0].length});
+    matches.push({entry: match[2], startIndex: match.index, endIndex: match.index + match[0].length});
   }
 
 
@@ -168,7 +168,8 @@ templates.forEach(function(include) {
       inputPath  = new AppPath(addDirectoryToFilenamePath(templatesDir, rawFilename), {app: false}),
       outputFile = app.name + "/" + inputFile,
       outputPath = path.resolve(outputFile),
-      inserts    = include.inserts,
+      insertFiles = include.inserts,
+      inserts,
       content;
 
   logger('* Loading template file: ' + colors.yellow(inputFile), 4);
@@ -176,18 +177,48 @@ templates.forEach(function(include) {
   // logger("iterate over the template entries, searching for inserts in each file", 6);
 
   var template = jsonfile.readFileSync(inputPath.abs),
-      entries  = _.pluck(template.entries, "name");
+      entries  = _.pluck(template.entries, "name"),
+      parsedInserts;
 
-  inserts.forEach(function(insert) {
+  inserts = insertFiles.reduce(function(inserts, insert) {
     var insertFile = include.definition + "." + insert + ".js",
-        insertPath = path.resolve(insertsDir.abs, insertFile);
+        insertPath = path.resolve(insertsDir.abs, insertFile),
+        parsedInserts,
+        content,
+        current,
+        next;
 
     content = readStaticContent(insertPath);
-    parsedInsert = parseInsert(content);
-    logger("Parsing " + colors.yellow(insertFile) + " for inserts…  " + "Found " + parsedInsert.length, 6);
+    parsedInserts = parseInsert(content);
 
-    console.log(parsedInsert);
+    for (var i = 0, len = parsedInserts.length; i < len; i++) {
+      current = parsedInserts[i];
+
+      if (i === len - 1) {
+        current.text = content.substring(current.endIndex).trim();
+      } else {
+        next = parsedInserts[i+1];
+        current.text = content.substring(current.endIndex, next.startIndex).trim();
+      }
+    }
+    logger("Parsing " + colors.yellow(insertFile) + " for inserts…  " + "Found " + parsedInserts.length, 6);
+
+    return inserts.concat(parsedInserts);
+  }, []);
+
+  inserts = inserts.sort(function(insert1, insert2) {
+    var val1 = insert1.entry.match(/\!/g),
+        val2 = insert2.entry.match(/\!/g);
+
+    val1 = (val1 === null) ? 0 : val1.length;
+    val2 = (val2 === null) ? 0 : val2.length;
+
+    // console.log(val1, val2)
+
+    return val2 - val1;
   });
+
+  util.inspect(_.pluck(inserts, "entry"));
 
   entries.forEach(function(entry) {
     logger("Compiling " + colors.yellow(inputFile + ":" + entry) + ".", 6);
