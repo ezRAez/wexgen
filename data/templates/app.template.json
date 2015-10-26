@@ -4,13 +4,13 @@
 		{
       "name":  "importModules",
       "comments": {
-        "block": "Require (ie, load) necessary dependencies and libaries."
+        "block": [ "Require (ie, load) necessary dependencies and libaries." ]
       }
     },
     {
       "name":  "importLocals",
       "comments": {
-        "block": "Require (ie, load) files within the local application."
+        "block": [ "Require (ie, load) files within the local application." ]
       }
     },
     {
@@ -18,7 +18,7 @@
       "comments": {
         "line": [
           "Create an instance of an Express application server.",
-          "It is standard practice to name this variable named `app`."
+          "It is standard practice to name this variable `app`."
         ]
       }
     },
@@ -58,7 +58,9 @@
     },
 		{
       "name": "addErrorHandlingMiddleware",
-      "comments": {"block": "Insert error-handling middleware."}
+      "comments": {
+        "block": [ "Insert error-handling middleware." ]
+      }
     },
     {
       "name": "moduleExport"

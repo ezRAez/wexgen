@@ -166,21 +166,19 @@ templates.forEach(function(include) {
   var rawFilename = include.definition +  '.template.json',
       inputFile  = convertToFilenamePath(rawFilename),
       inputPath  = new AppPath(addDirectoryToFilenamePath(templatesDir, rawFilename), {app: false}),
-      outputFile = app.name + "/" + inputFile,
+      outputFile = app.name + "/" + include.definition + ".js",
       outputPath = path.resolve(outputFile),
       insertFiles = include.inserts,
       inserts,
       content;
 
-  logger('* Loading template file: ' + colors.yellow(inputFile), 4);
+  logger('* Generating template: ' + colors.yellow(inputFile) + ', with the inserts in:', 4);
 
-  // logger("iterate over the template entries, searching for inserts in each file", 6);
+  /*****************************
+   * Build and resolve inserts.
+   *****************************/
 
-  var template = jsonfile.readFileSync(inputPath.abs),
-      entries  = _.pluck(template.entries, "name"),
-      parsedInserts;
-
-  inserts = insertFiles.reduce(function(inserts, insert) {
+  inserts = insertFiles.reduce(function(inserts, insert, index) {
     var insertFile = include.definition + "." + insert + ".js",
         insertPath = path.resolve(insertsDir.abs, insertFile),
         parsedInserts,
@@ -201,7 +199,7 @@ templates.forEach(function(include) {
         current.text = content.substring(current.endIndex, next.startIndex).trim();
       }
     }
-    logger("Parsing " + colors.yellow(insertFile) + " for inserts…  " + "Found " + parsedInserts.length, 6);
+    logger((index + 1) + ". " + colors.yellow(insertFile) + ": Parsed for inserts… " + parsedInserts.length + " found.", 6);
 
     return inserts.concat(parsedInserts);
   }, []);
@@ -218,41 +216,69 @@ templates.forEach(function(include) {
     return val2 - val1;
   });
 
-  util.inspect(_.pluck(inserts, "entry"));
+  /****************************
+   * Add inserts to templates.
+   ****************************/
 
-  entries.forEach(function(entry) {
-    logger("Compiling " + colors.yellow(inputFile + ":" + entry) + ".", 6);
+  logger((insertFiles.length+1) + '. Inserts parsed. Now loading the template file…', 6);
 
+  var template = jsonfile.readFileSync(inputPath.abs),
+      entries  = _.pluck(template.entries, "name"),
+      currentInserts = [],
+      currentIndex = -1,
+      codeBlock,
+      commentBlock,
+      content = "";
+
+
+  template.entries.forEach(function(entry) {
+    logger("- Compiling " + colors.yellow(inputFile + ":" + entry.name) + ".", 9);
+
+    do {
+      if (currentIndex !== -1)
+        currentInserts.push(inserts.splice(currentIndex, 1)[0]);
+
+      currentIndex = inserts.findIndex(function(insert) {
+        return insert.entry.indexOf(entry.name) !== -1;
+      });
+
+    } while (currentIndex !== -1)
+
+    codeBlock = currentInserts.map(function(ci) { return ci.text; }).join('\n\n')
+
+    if (entry.comments) {
+      if (entry.comments.block) {
+        commentBlock = entry.comments.block.join("\n * ");
+        commentBlock = "/*\n * " + commentBlock + "\n *\n */\n\n";
+        // commentBlock = "/* " + commentBlock + "\n */\n\n"; // ALTERNATE SOLUTION
+      } else {
+        commentBlock = entry.comments.line.join("\n// ");
+        commentBlock = "// " + commentBlock + "\n\n";
+      }
+    } else {
+      commentBlock = "";
+    }
+
+    content += "\n\n" + commentBlock + codeBlock;
+
+    logger("==============================", 9)
+    logger(commentBlock + codeBlock, 9, 8)
+    logger("==============================", 9)
+    logger();
+
+    currentIndex   = -1;
+    currentInserts = [];
   });
 
+  /*************************************
+   * Generate documents from templates.
+   *************************************/
 
+  content = _.trim(content) + "\n"; // empty newline at EOF
+
+  fs.outputFileSync(outputPath, content);
 });
 
-// var templates = fs.readdirSync(__templates)
-//                     .map(function(tempFileName) {
-//                       return path.resolve(__templates, tempFileName);
-//                     })
-//                     .map(function(tempPath) {
-//                       return jsonfile.readFileSync(tempPath);
-//                     });
-
-
-// console.log(JSON.stringify(templates, null, 2));
-
-/*****************************
- * Build and resolve inserts.
- *****************************/
-
-// ...
-
-/****************************
- * Add inserts to templates.
- ****************************/
-
-// ...
-
-/*************************************
- * Generate documents from templates.
- *************************************/
-
-// ...
+/*******************************************************
+ * Downloading from remotes, or from fallback versions.
+ *******************************************************/
