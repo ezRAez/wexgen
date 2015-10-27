@@ -14,8 +14,9 @@ var fs       = require('fs-extra'),
     AppPath  = require('application-resolved-path');
 
 // Import local modules
-var util = require('../lib/util'),
-    cli  = require('../lib/cli');
+var util   = require('../lib/util'),
+    cli    = require('../lib/cli'),
+    logger = require('../lib/logger');
 
 /***************************
  * Define global variables.
@@ -24,47 +25,48 @@ var util = require('../lib/util'),
 process.env.NODE_DEBUG = true;
 process.env.DEBUG = '*';
 
+// log levels
+LOG = {
+  VERBOSE: 0, // print message *only* when the verbose flag is on...
+  DEFAULT: 1,
+  QUIET:   2  // print message *even* when the quiet flag is on (ie, always!)...
+};
+
+logger.createPrinter('verbose', {level: LOG.VERBOSE});
+logger.createPrinter('quiet',   {level: LOG.QUIET});
+
 AppPath.root = path.join(__dirname, '..');
 
-var remotesFile  = new AppPath('data/remotes',   {app: true}),
+var remotesFile  = new AppPath('data/remotes/remotes.json',   {app: true}),
     staticsDir   = new AppPath('data/statics',   {app: true}),
     templatesDir = new AppPath('data/templates', {app: true}),
     insertsDir   = new AppPath('data/inserts',   {app: true});
-
-function createIndenter(indents) {
-  return function(str) {
-    var ind = "";
-    for (var i = 0; i < indents; i++) {
-      ind += " ";
-    };
-    return ind + str;
-  };
-}
-
-function logger() {
-  var text      = arguments[0] || "",
-      indents   = arguments[1] || 0,
-      indent    = createIndenter(indents),
-      maxLines  = arguments[2] || 0,
-      lines     = text.split("\n"),
-      numLines  = lines.length;
-
-  if (maxLines > 0 && numLines > maxLines) {
-    lines = lines.slice(0, maxLines);
-    lines.push(
-      "... (" + numLines + " lines total)");
-  }
-
-  text = lines.map(indent).join("\n");
-
-  console.log(text);
-  return text;
-}
 
 /******************************************************
  * Handle CLI input and generate an app description. *
  ******************************************************/
 
+cli(program, process.env.DEBUG) || process.exit();
+
+/**********************************
+ * Create application description.
+ **********************************/
+
+var app = cli.generatedApp();
+
+/*******************************************
+ * Set environment based on app description
+ *******************************************/
+
+// util.inspect(app)
+
+app.verbose ? logger.level = LOG.VERBOSE : logger.level = LOG.DEFAULT;
+
+// console.log(logger.level)
+
+/***********************************
+ * Define document parsing helpers.
+ ***********************************/
 
 var definitions = function(app, type) {
   return app.includes.filter(function(include) {
@@ -73,23 +75,6 @@ var definitions = function(app, type) {
     return include;
   });
 };
-
-// call with default application name
-cli(program, 'example-app', process.env.DEBUG) || process.exit();
-
-logger()
-logger(colors.yellow("1. Creating application description from options."))
-
-var app     = cli.generatedApp();
-    statics = definitions(app, 'static'),
-    templates = definitions(app, 'template');
-
-logger(colors.yellow('- Description: '), 2);
-logger(util.inspect(app, false), 4);
-
-/***********************************
- * Define document parsing helpers.
- ***********************************/
 
 var convertToFilenamePath = function(filename) {
   convertedPath = filename.replace(/\.ejs$/, '');
@@ -118,14 +103,27 @@ var readStaticContent = function(inputPath) {
   return content;
 };
 
-logger();
-logger(colors.yellow('2. Generating application.'));
+/*****************************
+ * Generate application.
+ *****************************/
+
+var statics   = definitions(app, 'static'),
+    templates = definitions(app, 'template'),
+    remotes   = definitions(app, 'remote');
+
+logger.quiet("Creating a WDI Express application at " + colors.green("./" + app.name));
+
+logger.verbose('1. Application description (from user options).', {padBefore: 1, color: 'yellow'});
+logger.verbose('- Description: ', {indent: 2, color: 'yellow'});
+logger.verbose(app, {indent: 4});
+
+logger.verbose('2. Generating application.', {padBefore: 1, color: 'yellow'});
 
 /*****************************
  * Generate static documents.
  *****************************/
 
-logger(colors.yellow('- Generating static documents:'), 2);
+logger.verbose('- Generating static documents:', {indent: 2});
 
 statics.forEach(function(include) {
   var rawFilename = include.definition,
@@ -135,12 +133,15 @@ statics.forEach(function(include) {
       outputPath = path.resolve(outputFile),
       content;
 
-  logger('* Writing static file: ' + colors.green(outputFile), 4);
+  logger.verbose('* Writing static file: ' + colors.green(outputFile), {indent: 4});
+
   content = readStaticContent(inputPath.abs);
-  logger("==============================", 6)
-  logger(content, 6, 8)
-  logger("==============================", 6)
-  logger();
+
+  logger.verbose('==============================', {indent: 6});
+  logger.verbose(content, {indent: 6, maxLines: 8});
+  logger.verbose('==============================', {indent: 6});
+  logger.verbose();
+
   fs.outputFileSync(outputPath, content);
 });
 
@@ -161,7 +162,7 @@ function parseInsert(text) {
   return matches;
 }
 
-logger(colors.yellow('- Generating templated documents:'), 2);
+// logger.print(colors.yellow('- Generating templated documents:'), 2);
 
 templates.forEach(function(include) {
   var rawFilename = include.definition +  '.template.json',
@@ -173,7 +174,7 @@ templates.forEach(function(include) {
       inserts,
       content;
 
-  logger('* Generating template: ' + colors.yellow(inputFile) + ', with the inserts in:', 4);
+  // logger.print('* Generating template: ' + colors.yellow(inputFile) + ', with the inserts in:', 4);
 
   /*****************************
    * Build and resolve inserts.
@@ -200,7 +201,7 @@ templates.forEach(function(include) {
         current.text = content.substring(current.endIndex, next.startIndex).trim();
       }
     }
-    logger((index + 1) + ". " + colors.yellow(insertFile) + ": Parsed for inserts… " + parsedInserts.length + " found.", 6);
+    // logger.print((index + 1) + ". " + colors.yellow(insertFile) + ": Parsed for inserts… " + parsedInserts.length + " found.", 6);
 
     return inserts.concat(parsedInserts);
   }, []);
@@ -221,7 +222,7 @@ templates.forEach(function(include) {
    * Add inserts to templates.
    ****************************/
 
-  logger((insertFiles.length+1) + '. Inserts parsed. Now loading the template file…', 6);
+  // logger.print((insertFiles.length+1) + '. Inserts parsed. Now loading the template file…', 6);
 
   var template = jsonfile.readFileSync(inputPath.abs),
       entries  = _.pluck(template.entries, "name"),
@@ -233,7 +234,7 @@ templates.forEach(function(include) {
 
 
   template.entries.forEach(function(entry) {
-    logger("- Compiling " + colors.yellow(inputFile + ":" + entry.name) + ".", 9);
+    // logger.print("- Compiling " + colors.yellow(inputFile + ":" + entry.name) + ".", 9);
 
     do {
       if (currentIndex !== -1)
@@ -262,10 +263,10 @@ templates.forEach(function(include) {
 
     content += "\n\n" + commentBlock + codeBlock;
 
-    logger("==============================", 9)
-    logger(commentBlock + codeBlock, 9, 8)
-    logger("==============================", 9)
-    logger();
+    // logger.print("==============================", 9)
+    // logger.print(commentBlock + codeBlock, 9, 8)
+    // logger.print("==============================", 9)
+    // logger.print();
 
     currentIndex   = -1;
     currentInserts = [];
@@ -284,10 +285,25 @@ templates.forEach(function(include) {
  * Downloading from remotes, or from fallback versions.
  *******************************************************/
 
+// logger.print(colors.yellow('- Copying documents stored remotely:'), 2);
 
+remotes.forEach(function(remoteDescription) {
 
- /************
-  * Success!
-  ***********/
+  var remotesJson = jsonfile.readFileSync(remotesFile.abs),
+      remoteName = remoteDescription.definition,
+      remote = remotesJson[remoteName];
 
-logger("Your application has been created!".green);
+  // logger.print("* Copying document associated with remote " + remoteName.yellow + ":", 4);
+
+  // util.inspect(remote)
+
+  // logger.print("Downloading " + remote.uri.yellow + "… (not implemented yet)", 6)
+});
+
+// logger.print();
+
+/************
+ * Success!
+ ***********/
+
+logger.quiet("Your application has been created!", {color: 'green'});
