@@ -1,3 +1,8 @@
 {
-
+  "normalize": {
+    "paths": ["public/css/normalize.css"],
+    "fallbackVersion": "0.0.0",
+    "retrieveVia": "curl",
+    "uri": ""
+  }
 }

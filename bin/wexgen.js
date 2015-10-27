@@ -65,8 +65,6 @@ function logger() {
  * Handle CLI input and generate an app description. *
  ******************************************************/
 
-logger()
-logger(colors.yellow("1. Creating application description from options."))
 
 var definitions = function(app, type) {
   return app.includes.filter(function(include) {
@@ -78,6 +76,9 @@ var definitions = function(app, type) {
 
 // call with default application name
 cli(program, 'example-app', process.env.DEBUG) || process.exit();
+
+logger()
+logger(colors.yellow("1. Creating application description from options."))
 
 var app     = cli.generatedApp();
     statics = definitions(app, 'static'),
@@ -166,7 +167,7 @@ templates.forEach(function(include) {
   var rawFilename = include.definition +  '.template.json',
       inputFile  = convertToFilenamePath(rawFilename),
       inputPath  = new AppPath(addDirectoryToFilenamePath(templatesDir, rawFilename), {app: false}),
-      outputFile = app.name + "/" + include.definition + ".js",
+      outputFile = app.name + "/" + include.definition,
       outputPath = path.resolve(outputFile),
       insertFiles = include.inserts,
       inserts,
@@ -282,3 +283,11 @@ templates.forEach(function(include) {
 /*******************************************************
  * Downloading from remotes, or from fallback versions.
  *******************************************************/
+
+
+
+ /************
+  * Success!
+  ***********/
+
+logger("Your application has been created!".green);

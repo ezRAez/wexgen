@@ -11,22 +11,27 @@
     },
     "includeDefaults": {
       "includes": [
-        "template:app",
-        "insert:app:defaults"
+        "template:app.js",
+        "insert:app.js:defaults"
       ]
     },
     "includeStandard": {
       "includes": [
-        "template:app",
-        "insert:app:ejsViews",
-        "insert:app:sessions"
+        "template:app.js",
+        "insert:app.js:ejsViews",
+        "insert:app.js:sessions"
+      ]
+    },
+    "includeNormalize": {
+      "includes": [
+        "remote:normalize"
       ]
     }
   },
   "options": {
     "includeProcfile": {
       "command":  ["-p, --include-procfile", "include a Procfile for Heroku"],
-      "includes": ["static:procfile"]
+      "includes": ["static:Procfile"]
     }
   }
 }
