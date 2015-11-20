@@ -1,7 +1,7 @@
 {
   "name": "wexgen",
   "description": "An Express app generator following WDI conventions.",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "author": "West Coast Phil <pj@ga.co>",
   "contributors": [],
   "repository": {
@@ -16,6 +16,7 @@
     "debug": "^2.2.0",
     "ejs": "^2.3.3",
     "expand-home-dir": "0.0.2",
+    "fs-extra": "^0.26.2",
     "jsonfile": "^2.2.1",
     "lodash": "^3.10.1"
   },
@@ -26,7 +27,6 @@
   "preferGlobal": true,
   "devDependencies": {
     "chai": "^3.2.0",
-    "fs-extra": "^0.23.1",
     "mocha": "^2.2.5",
     "mock-fs": "^3.1.0",
     "rimraf": "~2.2.8",
