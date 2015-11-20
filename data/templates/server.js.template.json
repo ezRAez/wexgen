@@ -1,0 +1,15 @@
+{
+	"path": "/server.js",
+	"entries": [
+		{ "name": "importModules"              },
+    { "name": "importLocals"               },
+    { "name": "instantiateApp"             },
+		{ "name": "configureApp"               },
+    { "name": "createLocalVariables"       },
+		{ "name": "addApplicationMiddleware"   },
+		{ "name": "addStaticRoutingMiddleware" },
+    { "name": "addRoutingMiddleware"       },
+		{ "name": "addErrorHandlingMiddleware" },
+    { "name": "moduleExport"               }
+	]
+}

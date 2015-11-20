@@ -1,26 +1,46 @@
 {
   "defaults": {
     "includeGitignore": {
-      "includes": ["static:_gitignore.ejs"]
-    },
-    "includeBinWWW": {
-      "includes": ["static:bin-www.ejs"]
+      "includes": ["static:_gitignore"]
     },
     "includePackage": {
       "includes": ["static:package.json.ejs"]
     },
+    "includeMongoose": {
+      "includes": ["static:seeds.js"]
+    },
     "includeDefaults": {
       "includes": [
-        "template:app.js",
-        "insert:app.js:defaults"
+        "template:server.js",
+        "insert:server.js:defaults"
       ]
     },
     "includeStandard": {
       "includes": [
-        "template:app.js",
-        "insert:app.js:ejsViews",
-        "insert:app.js:sessions"
+        "static:README.md.ejs",
+        "static:config-database.js",
+        "static:config-environment.js.ejs",
+        "static:config-routes.js",
+        "static:controllers-users.js",
+        "static:controllers-welcome.js",
+        "static:models-user.js",
+        "static:public-css-main.css",
+        "static:public-js-main.js",
+        "static:views-error.ejs.ejs",
+        "static:views-partials-head.ejs.ejs",
+        "static:views-partials-header.ejs.ejs",
+        "static:views-partials-scripts.ejs.ejs",
+        "static:views-users-index.ejs.ejs",
+        "static:views-users-show.ejs.ejs",
+        "static:views-welcome-index.ejs.ejs",
+        "template:server.js",
+        "insert:server.js:ejsViews",
+        "insert:server.js:cookies",
+        "insert:server.js:debugging"
       ]
+    },
+    "includeBinWWW": {
+      "includes": ["static:bin-www"]
     }
   },
   "options": {

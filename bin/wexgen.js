@@ -78,8 +78,8 @@ var definitions = function(app, type) {
 
 var convertToFilenamePath = function(filename) {
   convertedPath = filename.replace(/\.ejs$/, '');
-  convertedPath = convertedPath.replace(/_/, '.');
-  convertedPath = convertedPath.replace(/-/, '/');
+  convertedPath = convertedPath.replace(/^_/, '.');
+  convertedPath = convertedPath.replace(/-/g, '/');
   return convertedPath;
 };
 
@@ -150,12 +150,18 @@ statics.forEach(function(include) {
  *******************************/
 
 function parseInsert(text) {
-  var re = /\/\/(\s*)\:([\w|\!]+)\n/g,
+  var re = /\/\/(\s*)\:([\w|\!]+)(-)*\n/g,
       match = "",
       matches = [];
 
   while(match = re.exec(text)) {
-    matches.push({entry: match[2], startIndex: match.index, endIndex: match.index + match[0].length});
+    // console.log(match)
+    matches.push({
+      entry:      match[2],
+      startIndex: match.index,
+      endIndex:   match.index + match[0].length,
+      trimRight:  match[3] === '-'
+    });
   }
 
 
@@ -218,6 +224,8 @@ templates.forEach(function(include) {
     return val2 - val1;
   });
 
+  // console.log(inserts)
+
   /****************************
    * Add inserts to templates.
    ****************************/
@@ -246,7 +254,15 @@ templates.forEach(function(include) {
 
     } while (currentIndex !== -1)
 
-    codeBlock = currentInserts.map(function(ci) { return ci.text; }).join('\n\n')
+    codeBlock = currentInserts.map(function(ci) {
+      if (ci.text && ci.text.length > 0) {
+        return (ci.trimRight) ? ci.text + '\n' : ci.text + '\n\n';
+      }
+      // console.log(ci)
+      return ci.text;
+    }).join('');
+    // console.log('---------------------------------')
+    codeBlock = _.trim(codeBlock);
 
     if (entry.comments) {
       if (entry.comments.block) {
@@ -261,7 +277,9 @@ templates.forEach(function(include) {
       commentBlock = "";
     }
 
-    content += "\n\n" + commentBlock + codeBlock;
+    // Add insert text, entry comments, and padding into the templated doc.
+    var padding = "\n\n";
+    content += padding + commentBlock + codeBlock;
 
     // logger.print("==============================", 9)
     // logger.print(commentBlock + codeBlock, 9, 8)
