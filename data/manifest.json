@@ -21,11 +21,6 @@
         "insert:app.js:ejsViews",
         "insert:app.js:sessions"
       ]
-    },
-    "includeNormalize": {
-      "includes": [
-        "remote:normalize"
-      ]
     }
   },
   "options": {

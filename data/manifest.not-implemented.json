@@ -28,5 +28,10 @@
       "command":  ["-s, --include-socketio", "include Socket.IO"],
       "includes": ["insert:socketio", "insert:socketioServer", "static:iojs"]
     }
+  },
+  "includeNormalize": {
+    "includes": [
+      "remote:normalize"
+    ]
   }
 }

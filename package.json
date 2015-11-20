@@ -1,7 +1,7 @@
 {
   "name": "wexgen",
   "description": "An Express app generator following WDI conventions.",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha",
   "author": "West Coast Phil <pj@ga.co>",
   "contributors": [],
   "repository": {
