@@ -5,8 +5,8 @@ following WDI conventions.
 
 ## Attribution
 
-While a fork, this project is very different from the original Express 
-generator in scope and form. However, the basic template for the completed
+While a fork of the Express generator, this project is very different from 
+the original in scope and form. However, the basic template for the completed
 application (and this documentation) is taken directly the original. All 
 thanks to everyone who has worked on Express, and who keep it and its suite
 of tools running. Send them tips!
@@ -42,6 +42,16 @@ Rock and roll:
 $ nodemon
 ```
 
+## License
+
+[MIT](LICENSE)
+
+<!-- Links -->
+
+[gratipay-image]: https://img.shields.io/gratipay/dougwilson.svg
+[gratipay-url]: https://gratipay.com/dougwilson/
+
+<!--
 ## Command Line Options
 
 This generator can also be further configured with the following command line flags.
@@ -58,19 +68,7 @@ This generator can also be further configured with the following command line fl
 -f, --force         force on non-empty directory
 ```
 
-## License
-
-[MIT](LICENSE)
-
-<!-- Links -->
-
-[gratipay-image]: https://img.shields.io/gratipay/dougwilson.svg
-[gratipay-url]: https://gratipay.com/dougwilson/
-
 ----
-
-
-
 
 Note: Only tested for Io.js v3.0.0 (and above).
 
@@ -119,3 +117,4 @@ $ express newapp
      $ DEBUG=newapp:* npm start
 
 ```
+-->
