@@ -43,7 +43,13 @@
       "includes": ["static:bin-www"]
     }
   },
-  "options": {
+  "useOptions": {
+    "verbose":     ["-v, --verbose",      "run and print verbose output"],
+    "quiet":       ["-q, --quiet",        "run with no output"],
+    "useComments": ["-C, --use-comments", "add full explanatory comments (not implemented)"],
+    "useForce":    ["-F, --use-force",    "overwrite a non-empty app directory (not implemented)"]
+  },
+  "includeOptions": {
     "includeProcfile": {
       "command":  ["-p, --include-procfile", "include a Procfile for Heroku"],
       "includes": ["static:Procfile"]

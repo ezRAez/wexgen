@@ -27,6 +27,7 @@
   "preferGlobal": true,
   "devDependencies": {
     "chai": "^3.2.0",
+    "intercept-stdout": "^0.1.2",
     "mocha": "^2.2.5",
     "mock-fs": "^3.1.0",
     "rimraf": "~2.2.8",
