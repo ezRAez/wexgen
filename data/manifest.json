@@ -7,7 +7,7 @@
       "includes": ["static:package.json.ejs"]
     },
     "includeMongoose": {
-      "includes": ["static:seeds.js"]
+      "includes": ["static:config-seeds.js"]
     },
     "includeDefaults": {
       "includes": [
@@ -22,7 +22,7 @@
         "static:config-environment.js.ejs",
         "static:config-routes.js",
         "static:controllers-users.js",
-        "static:controllers-welcome.js",
+        "static:controllers-pages.js",
         "static:models-user.js",
         "static:public-css-main.css",
         "static:public-js-main.js",
@@ -32,7 +32,7 @@
         "static:views-partials-scripts.ejs.ejs",
         "static:views-users-index.ejs.ejs",
         "static:views-users-show.ejs.ejs",
-        "static:views-welcome-index.ejs.ejs",
+        "static:views-pages-welcome.ejs.ejs",
         "template:server.js",
         "insert:server.js:ejsViews",
         "insert:server.js:cookies",
