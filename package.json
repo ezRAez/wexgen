@@ -1,12 +1,12 @@
 {
   "name": "wexgen",
   "description": "An Express app generator following WDI conventions.",
-  "version": "0.1.0-alpha.4.1",
+  "version": "0.1.0-alpha.4.2",
   "author": "West Coast Phil <pj@ga.co>",
   "contributors": [],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ga-instructors/wexgen.git"
+    "url": "git+https://github.com/h4w5/wexgen.git"
   },
   "license": "MIT",
   "dependencies": {
@@ -15,7 +15,7 @@
     "commander": "^2.8.1",
     "debug": "^2.2.0",
     "ejs": "^2.3.3",
-    "expand-home-dir": "0.0.3",
+    "expand-home-dir": "^0.0.3",
     "fs-extra": "^0.26.2",
     "jsonfile": "^2.2.1",
     "lodash": "^3.10.1"
@@ -32,12 +32,8 @@
     "rimraf": "~2.2.8",
     "supertest": "1.0.1"
   },
-  "scripts": {
-    "test": "mocha --reporter spec --bail --check-leaks test/",
-    "test-ci": "mocha --reporter spec --check-leaks test/"
-  },
   "bugs": {
-    "url": "https://github.com/ga-instructors/wexgen/issues"
+    "url": "https://github.com/h4w5/wexgen/issues"
   },
-  "homepage": "https://github.com/ga-instructors/wexgen#readme"
+  "homepage": "https://github.com/h4w5/wexgen#readme"
 }
